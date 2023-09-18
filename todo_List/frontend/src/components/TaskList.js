@@ -14,14 +14,11 @@ const TaskList = () => {
   const [taskId, setTaskId] = useState("")
   const [formData, setFormData] = useState({
     name: "",
-    complete: false
+    completed: false,
   });
 
   const { name } = formData
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  };
+
 
   const getTasks = async () => {
     setIsLoading(true)
@@ -40,6 +37,11 @@ const TaskList = () => {
     getTasks()
   }, [])
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
+  };
+
   const createTask = async (e) => {
     e.preventDefault();
     if (name === "") {
@@ -49,6 +51,7 @@ const TaskList = () => {
       await axios.post(`${URL}/api/task`, formData)
       toast.success("Task added successfully");
       setFormData({ ...formData, name: "" })
+      getTasks()
 
     } catch (error) {
       toast.error(error.message);
@@ -67,7 +70,7 @@ const TaskList = () => {
   };
 
   const getSingleTask = async (task) => {
-    setFormData({ name: task.name, complete: false });
+    setFormData({ name: task.name, completed: false });
     setTaskId(task._id);
     setIsEditing(true)
   }
@@ -86,7 +89,32 @@ const TaskList = () => {
 
     }
 
+  };
+
+
+  const setToComplete = async (task) => {
+    const newFormData = {
+      name: task.name,
+      completed: true,
+    }
+    try {
+      await axios.put(`${URL}/api/task/${task._id}`, newFormData)
+      getTasks()
+
+    } catch (error) {
+      toast.error(error.message)
+    }
+
   }
+
+  useEffect(() => {
+    const cTask = tasks.filter((task) => {
+      return task.completed === true;
+    });
+    setCompletedTasks(cTask);
+  }, [tasks]);
+
+
   return (
     <div>
       <h2>Task Manager</h2>
@@ -97,14 +125,18 @@ const TaskList = () => {
         isEditing={isEditing}
         updateTask={updateTask}
       />
-      <div className="--flex-between --pb">
-        <p>
-          <b>Total Task : </b> 0
-        </p>
-        <p>
-          <b>Completed Task : </b> 0
-        </p>
-      </div>
+      {tasks.length > 0 && (
+        <div className="--flex-between --pb">
+          <p>
+            <b>Total Task : </b> {tasks.length}
+          </p>
+          <p>
+            <b>Completed Task : </b> {completedTask.length}
+          </p>
+        </div>
+
+      )}
+
       <hr />
 
       {
@@ -129,6 +161,7 @@ const TaskList = () => {
                     index={index}
                     deleteTask={deleteTask}
                     getSingleTask={getSingleTask}
+                    setToComplete={setToComplete}
                   />
                 )
               })}
