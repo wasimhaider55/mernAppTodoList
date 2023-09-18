@@ -8,7 +8,7 @@ import loadingImg from "../assets/loader.gif";
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
-  const [completedTask, setCompletedTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false)
   const [taskId, setTaskId] = useState("")
@@ -96,16 +96,14 @@ const TaskList = () => {
     const newFormData = {
       name: task.name,
       completed: true,
-    }
+    };
     try {
-      await axios.put(`${URL}/api/task/${task._id}`, newFormData)
-      getTasks()
-
+      await axios.put(`${URL}/api/task/${task._id}`, newFormData);
+      await getTasks(); // Make sure getTasks is correctly updating the state
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     }
-
-  }
+  };
 
   useEffect(() => {
     const cTask = tasks.filter((task) => {
@@ -131,10 +129,9 @@ const TaskList = () => {
             <b>Total Task : </b> {tasks.length}
           </p>
           <p>
-            <b>Completed Task : </b> {completedTask.length}
+            <b>Completed Task : </b> {completedTasks.length}
           </p>
         </div>
-
       )}
 
       <hr />

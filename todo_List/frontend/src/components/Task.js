@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FaCheckDouble, FaEdit, FaRegTrashAlt } from "react-icons/fa";
 
-const Task = ({ task, index, deleteTask, getSingleTask, setToComplete }) => {
-  const [completed, setCompleted] = useState(task.completed);
+const Task = ({ task, index, deleteTask, getSingleTask, }) => {
+  const [completed, setToComplete] = useState(task.completed);
 
   return (
     <div className={completed ? "task completed" : "task"}>
@@ -14,8 +14,8 @@ const Task = ({ task, index, deleteTask, getSingleTask, setToComplete }) => {
         <FaCheckDouble
           color="green"
           onClick={() => {
-            setToComplete(task);
-            setCompleted(!completed);
+            setToComplete(!completed);
+
           }}
         />
         <FaEdit color="purple" onClick={() => getSingleTask(task)} />
