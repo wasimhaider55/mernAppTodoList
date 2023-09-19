@@ -112,7 +112,27 @@ const TaskList = () => {
     setCompletedTasks(cTask);
   }, [tasks]);
 
+  const toggleCompleted = async (taskId) => {
+    try {
+      await axios.put(`${URL}/api/task/${taskId}`, {
+        completed: !tasks.find((task) => task._id === taskId).completed,
+      });
+      const updatedTasks = tasks.map((task) =>
+        task._id === taskId
+          ? { ...task, completed: !task.completed }
+          : task
+      );
+      setTasks(updatedTasks);
 
+      // Update completedTasks count dynamically
+      const completedCount = updatedTasks.filter(
+        (task) => task.completed
+      ).length;
+      setCompletedTasks(completedCount);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
     <div>
       <h2>Task Manager</h2>
@@ -159,6 +179,8 @@ const TaskList = () => {
                     deleteTask={deleteTask}
                     getSingleTask={getSingleTask}
                     setToComplete={setToComplete}
+                    toggleCompleted={toggleCompleted}
+
                   />
                 )
               })}
